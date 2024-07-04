@@ -3,17 +3,17 @@ import { catchError, map } from 'rxjs/operators';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 
+
 //Declaring the api url that will provide data for the client app
 const apiUrl = 'https://testingmovieapi-l6tp.onrender.com/';
 @Injectable({
   providedIn: 'root'
 })
 
-export class UserRegistrationService {
+export class FetchApiDataService {
   // Inject the HttpClient module to the constructor params
  // This will provide HttpClient to the entire class, making it available via this.http
   constructor(private http: HttpClient) {}
-
   // api call for the user registration endpoint
   public userRegistration(userDetails: any): Observable<any> {
     console.log(userDetails);
@@ -22,6 +22,7 @@ export class UserRegistrationService {
     );
   }
 
+
    // api call for the user login endpoint
    public userLogin(userDetails: any): Observable<any> {
     console.log(userDetails);
@@ -29,7 +30,6 @@ export class UserRegistrationService {
       catchError(this.handleError)
     );
   }
-
   // api call for to get all movies endpoint
   getAllMovies(): Observable<any> {
     const token = localStorage.getItem('token');
@@ -39,9 +39,8 @@ export class UserRegistrationService {
       catchError(this.handleError)
     );
   }
-
-  // Non-typed response extraction
-  private extractResponseData(res: any): any {
+   // Non-typed response extraction
+   private extractResponseData(res: any): any {
     const body = res;
     return body || { };
   }
@@ -58,7 +57,6 @@ export class UserRegistrationService {
       catchError(this.handleError)
     );
   }
-
   // api call to get one director endpoint
   getOneDirector(directorName: string): Observable<any> {
     const token = localStorage.getItem('token');
@@ -71,7 +69,6 @@ export class UserRegistrationService {
       catchError(this.handleError)
     );
   }
-
   // api call to get one genre endpoint
   getOneGenre(genreName: string): Observable<any> {
     const token = localStorage.getItem('token');
@@ -84,14 +81,12 @@ export class UserRegistrationService {
       catchError(this.handleError)
     );
   }
-
    // api call to get one user endpoint
   //  this endpoint doesn't exist
    getOneUser(username: string): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     return user;
    }
-
    //api call to get favorite movies of a user endpoint
   getFavoriteMovies(username: string): Observable<any> {
     const token = localStorage.getItem('token');
@@ -105,11 +100,9 @@ export class UserRegistrationService {
       catchError(this.handleError)
     );
   }
-
   // api call to add a movie to favourite Movies endpoint
   addFavoriteMovie(movieName: string, username: string): Observable<any> {
     const token = localStorage.getItem('token');
-
     return this.http.post(apiUrl + `users/${username}/movies/${movieName}`, {}, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
@@ -119,7 +112,6 @@ export class UserRegistrationService {
       catchError(this.handleError)
     );
   }
-
   // api call to edit user endpoint
   editUser(updatedUser: any): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -133,7 +125,6 @@ export class UserRegistrationService {
       catchError(this.handleError)
     );
   }
-
    // api call to delete user endpoint
    deleteUser(): Observable<any> {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -146,11 +137,9 @@ export class UserRegistrationService {
       catchError(this.handleError)
     );
   }
-
   // Making the api call for the elete a movie from the favorite movies endpoint
   deleteFavoriteMovie(movieName: string, username: string): Observable<any> {
     const token = localStorage.getItem('token');
-
     return this.http.delete(apiUrl + 'users/' + username + '/movies/' + movieName, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
@@ -160,9 +149,6 @@ export class UserRegistrationService {
       catchError(this.handleError)
     );
   }
-
-
-
   private handleError(error: HttpErrorResponse): any {
     if (error.error instanceof ErrorEvent) {
     console.error('Some error occurred:', error.error.message);
