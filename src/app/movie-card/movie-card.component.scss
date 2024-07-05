@@ -1,0 +1,53 @@
+.movie-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+    padding: 20px;
+}
+
+.movie-card {
+    width: 300px; // Adjust the width as needed
+    margin: 20px;
+    background-color: rgb(67, 132, 193);
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+
+    &:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    mat-card-header {
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    mat-card-title {
+        font-size: 1.5em;
+    }
+
+    mat-card-image {
+        height: 400px; // Adjust height as needed
+        object-fit: cover;
+    }
+
+    mat-card-actions {
+        display: flex;
+        justify-content: space-around;
+        padding: 10px;
+        background-color: rgb(67, 132, 193);
+    }
+
+    .custom-button {
+        background-color: white !important;
+        color: black !important;
+        margin: 5px;
+    }
+
+    mat-icon {
+        color: white;
+        cursor: pointer;
+    }
+}
