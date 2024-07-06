@@ -1,0 +1,99 @@
+.main {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.user-profile {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+    
+}
+
+
+
+.user-container {
+    margin-bottom: 20px;
+}
+
+.user-info-display {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info-display label {
+    font-weight: bold;
+}
+
+.user-info-display span {
+    text-align: right;
+}
+
+.update-user-info {
+    margin-top: 20px;
+}
+
+.example-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.mat-form-field {
+    width: 100%;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.button-container button {
+    width: 48%;
+}
+
+.spacer {
+    margin-top: 40px;
+}
+
+.content {
+    margin-top: 20px;
+}
+
+.favorite-movies-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+}
+
+.favorite-movies-container app-movie-card {
+    flex: 0 0 auto;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+    .main {
+        padding: 10px;
+    }
+
+    .user-profile {
+        padding: 10px;
+    }
+
+    .button-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .button-container button {
+        width: 100%;
+    }
+
+    .favorite-movies-container {
+        gap: 10px;
+    }
+}

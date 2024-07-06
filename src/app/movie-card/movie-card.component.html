@@ -1,21 +1,21 @@
-<app-navbar  *ngIf="!isFromFav"></app-navbar>
+<app-navbar *ngIf="!isFromFav"></app-navbar>
 <div class="movie-cards-container">
-    <mat-card *ngFor="let movie of movies;" class="movie-card">
-        <mat-card-header>
-            <mat-card-title>{{movie.title}}</mat-card-title>
-        </mat-card-header>
-        <img mat-card-image [src]="movie.imageUrl" alt="{{movie.title}}" class="movie-image" />
-        <mat-card-actions>
-            <button mat-button class="custom-button" (click)="openGenreDialog(movie.genre)">
-                Genre
-            </button>
-            <button mat-button class="custom-button" (click)="openDirectorDialog(movie.director.name)">
-                Director
-            </button>
-            <button mat-button class="custom-button" (click)="openSynopsisDialog(movie.title, movie.description)">
-                Synopsis
-            </button>
-            <mat-icon>favorite_border</mat-icon>
-        </mat-card-actions>
-    </mat-card>
+  <mat-card *ngFor="let movie of movies;" class="movie-card">
+    <mat-card-header>
+      <mat-card-title>{{ movie.title }}</mat-card-title>
+    </mat-card-header>
+    <img mat-card-image [src]="movie.imageUrl" alt="{{ movie.title }}" height="450" />
+    <mat-card-actions>
+      <button mat-button class="custom-button" (click)="openGenreDialog(movie.genre)">
+        Genre
+      </button>
+      <button mat-button class="custom-button" (click)="openDirectorDialog(movie.director.name)">
+        Director
+      </button>
+      <button mat-button class="custom-button" (click)="openSynopsisDialog(movie.title, movie.description)">
+        Synopsis
+      </button>
+      <mat-icon>favorite_border</mat-icon>
+    </mat-card-actions>
+  </mat-card>
 </div>

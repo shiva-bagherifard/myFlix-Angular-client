@@ -51,12 +51,12 @@ export class MovieCardComponent implements OnInit {
     }
   }
 
-  openGenreDialog(genreName: string): void {
-    this.fetchApiData.getOneGenre(genreName).subscribe((resp: any) => {
+  openGenreDialog(genre: string): void {
+    this.fetchApiData.getOneGenre(genre).subscribe((resp: any) => {
       this.genre = resp;
       this.dialog.open(GenreInfoComponent, {
         data: {
-          name: this.genre.name,
+          name: this.genre,
           description: this.genre.description
         },
         width: '500px'
@@ -71,8 +71,6 @@ export class MovieCardComponent implements OnInit {
         data: {
           name: this.director.name,
           bio: this.director.bio,
-          birthDate: this.director.birthDate,
-          deathDate: this.director.deathDate
         },
         width: '500px'
       });
