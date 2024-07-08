@@ -9,11 +9,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class DirectorInfoComponent {
   constructor(
     public dialogRef: MatDialogRef<DirectorInfoComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { name: string, bio: string,}
+    @Inject(MAT_DIALOG_DATA) public data: { name: string, bio: string }
   ) { }
 
   closeDialog(): void {
     this.dialogRef.close();
   }
 }
-

@@ -52,12 +52,17 @@ export class MovieCardComponent implements OnInit {
   }
 
   openGenreDialog(genre: string): void {
+    if (!genre) {
+      console.error('Genre name is undefined or null.');
+      return;
+    }
+    
     this.fetchApiData.getOneGenre(genre).subscribe((resp: any) => {
-      this.genre = resp;
+      const genreInfo = resp; // Assuming response contains genre information
       this.dialog.open(GenreInfoComponent, {
         data: {
-          name: this.genre,
-          description: this.genre.description
+          name: genreInfo.name,
+          description: genreInfo.description
         },
         width: '500px'
       });
@@ -66,11 +71,12 @@ export class MovieCardComponent implements OnInit {
 
   openDirectorDialog(directorName: string): void {
     this.fetchApiData.getOneDirector(directorName).subscribe((resp: any) => {
-      this.director = resp;
+      console.log('Director data:', resp);
+      const director = resp[0]?.director || {}; // Adjust based on actual response structure
       this.dialog.open(DirectorInfoComponent, {
         data: {
-          name: this.director.name,
-          bio: this.director.bio,
+          name: director.name || directorName,
+          bio: director.bio || 'No bio available',
         },
         width: '500px'
       });

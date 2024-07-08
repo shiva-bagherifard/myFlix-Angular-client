@@ -60,12 +60,13 @@ export class FetchApiDataService {
     );
   }
 
-  // api call to get one director endpoint
+  // API call to get one director endpoint
   getOneDirector(directorName: string): Observable<any> {
     const token = JSON.parse(localStorage.getItem('user')).token;
-    return this.http.get(apiUrl + 'movies/directors/' + directorName, {
+    const encodedDirectorName = encodeURIComponent(directorName);
+    return this.http.get(`${apiUrl}movies/director/${encodedDirectorName}`, {
       headers: new HttpHeaders({
-        Authorization: 'Bearer ' + token,
+        Authorization: `Bearer ${token}`,
       })
     }).pipe(
       map(this.extractResponseData),
@@ -73,10 +74,11 @@ export class FetchApiDataService {
     );
   }
 
-  // api call to get one genre endpoint
+
+  // API call to get one genre by name
   getOneGenre(genreName: string): Observable<any> {
     const token = JSON.parse(localStorage.getItem('user')).token;
-    return this.http.get(apiUrl + 'movies/genre/' + genreName, {
+    return this.http.get(apiUrl + `movies/genres/${encodeURIComponent(genreName)}`, {
       headers: new HttpHeaders({
         Authorization: 'Bearer ' + token,
       })
