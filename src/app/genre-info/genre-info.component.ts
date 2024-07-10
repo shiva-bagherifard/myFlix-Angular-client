@@ -12,6 +12,14 @@ export class GenreInfoComponent {
   genre: string;
   description: string;
 
+
+
+   /**
+   * @description Creates an instance of GenreInfoComponent.
+   * @param dialogRef - Angular Material dialog reference.
+   * @param data - Data injected into the dialog.
+   *               Contains genre's name and description.
+   */
   constructor(
     public dialogRef: MatDialogRef<GenreInfoComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any // Define type for data
