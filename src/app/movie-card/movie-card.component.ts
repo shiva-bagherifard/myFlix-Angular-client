@@ -162,7 +162,7 @@ export class MovieCardComponent implements OnInit {
    * @returns True if the movie is favorited, false otherwise.
    */
   isFav(movie: any): boolean {
-    return this.favoriteMovies.includes(movie.title);
+    return this.favoriteMovies.includes(movie._id);
   }
 
 
@@ -187,9 +187,9 @@ export class MovieCardComponent implements OnInit {
     let user = localStorage.getItem('user');
     if (user) {
       let parsedUser = JSON.parse(user);
-      this.fetchApiData.addFavoriteMovie(movie.title, parsedUser.username).subscribe((resp: any) => {
+      this.fetchApiData.addFavoriteMovie(movie._id, parsedUser.username).subscribe((resp: any) => {
         localStorage.setItem('user', JSON.stringify(resp));
-        this.favoriteMovies.push(movie.title);
+        this.favoriteMovies.push(movie._id);
         this.snackBar.open(`${movie.title} has been added to your favorites`, 'OK', {
           duration: 3000
         });
@@ -208,7 +208,7 @@ export class MovieCardComponent implements OnInit {
     let user = localStorage.getItem('user');
     if (user) {
       let parsedUser = JSON.parse(user);
-      this.fetchApiData.deleteFavoriteMovie(movie.title, parsedUser.username).subscribe((resp) => {
+      this.fetchApiData.deleteFavoriteMovie(movie._id, parsedUser.username).subscribe((resp) => {
         localStorage.setItem('user', JSON.stringify(resp));
         this.favoriteMovies = this.favoriteMovies.filter(title => title !== movie.title);
         this.snackBar.open(`${movie.title} has been removed from your favorites`, 'OK', {
