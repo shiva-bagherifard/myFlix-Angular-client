@@ -79,7 +79,7 @@ export class MovieCardComponent implements OnInit {
    * Retrieves user's favorite movies from local storage.
    */
   getFavouriteMovies(): void {
-    this.movies = this.movies.filter(({ title }) => this.favoriteMovies.includes(title));
+    this.movies = this.movies.filter(movie => this.favoriteMovies.includes(movie._id));
   }
 
 
