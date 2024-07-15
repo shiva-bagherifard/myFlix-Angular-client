@@ -13,54 +13,31 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class MovieCardComponent implements OnInit {
 
-
-  /**
- * Flag to indicate whether the component is displaying favorite movies.
- * Default value is false.
- */
   @Input() isFromFav: boolean = false;
 
   movies: any[] = [];
-
-  /**
- * Array to store all movies.
- */
-  genre: any = '';
-  director: any = '';
-  user: any = {};
   favoriteMovies: any[] = [];
+  user: any = {};
 
-
-
-  /**
- * Constructor of the MovieCardComponent class.
- * Initializes FetchApiDataService, MatDialog, and MatSnackBar.
- * @param fetchApiData - Service for fetching data from the API.
- * @param dialog - Service for opening dialogs.
- * @param snackBar - Service for displaying snack bar notifications.
- */
   constructor(
     public fetchApiData: FetchApiDataService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar
   ) {}
 
-
-
-  /**
- * Lifecycle hook that is called after the component's view has been initialized.
- * Initializes the component by fetching favorites and movies.
- */
   ngOnInit(): void {
-    this.getFavorites();
+    this.getUserData();
     this.getMovies();
   }
 
+  getUserData(): void {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.fetchApiData.getUser(user.username).subscribe((resp: any) => {
+      this.user = resp;
+      this.favoriteMovies = this.user.FavoriteMovies || [];
+    });
+  }
 
-
-  /**
-   * Fetches all movies from the database.
-   */
   getMovies(): void {
     this.fetchApiData.getAllMovies().subscribe((resp: any) => {
       this.movies = resp;
@@ -69,44 +46,44 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
-
-
-  /**
-   * Filters movies to display only favorites.
-   */
-
-    /**
-   * Retrieves user's favorite movies from local storage.
-   */
-  getFavouriteMovies(): void {
-    this.movies = this.movies.filter(movie => this.favoriteMovies.includes(movie._id));
+  getFavorites(): void {
+    this.fetchApiData.getUser(this.user.username).subscribe((resp: any) => {
+      this.favoriteMovies = resp.FavoriteMovies || [];
+    });
   }
 
+  getFavouriteMovies(): void {
+    this.movies = this.movies.filter(movie => this.isFavorite(movie));
+  }
 
-  /**
-   * Retrieves user's favorite movies from local storage.
-   */
-  getFavorites(): void {
-    let user = localStorage.getItem('user');
-    if (user) {
-      let parsedUser = JSON.parse(user);
-      this.favoriteMovies = parsedUser.favoriteMovies;
+  isFavorite(movie: any): boolean {
+    return this.favoriteMovies.includes(movie._id);
+  }
+
+  toggleFavorite(movie: any): void {
+    if (this.isFavorite(movie)) {
+      this.fetchApiData.removeFavoriteMovie(movie._id).subscribe(() => {
+        this.snackBar.open(`${movie.title} removed from favorites`, 'OK', { duration: 2000 });
+        this.favoriteMovies = this.favoriteMovies.filter((id: string) => id !== movie._id);
+        if (this.isFromFav) this.getFavouriteMovies(); // Update favorite movies if viewing only favorites
+      });
+    } else {
+      this.fetchApiData.addFavoriteMovie(movie._id).subscribe(() => {
+        this.snackBar.open(`${movie.title} added to favorites`, 'OK', { duration: 2000 });
+        this.favoriteMovies.push(movie._id);
+        if (this.isFromFav) this.getFavouriteMovies(); // Update favorite movies if viewing only favorites
+      });
     }
   }
 
-
-  /**
-   * Opens dialog to display genre information.
-   * @param genreName - The name of the genre.
-   */
   openGenreDialog(genre: string): void {
     if (!genre) {
       console.error('Genre name is undefined or null.');
       return;
     }
-    
+
     this.fetchApiData.getOneGenre(genre).subscribe((resp: any) => {
-      const genreInfo = resp; // Assuming response contains genre information
+      const genreInfo = resp;
       this.dialog.open(GenreInfoComponent, {
         data: {
           name: genreInfo.name,
@@ -117,16 +94,9 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
-
-
-  /**
-   * Opens dialog to display director information.
-   * @param directorName - The name of the director.
-   */
   openDirectorDialog(directorName: string): void {
     this.fetchApiData.getOneDirector(directorName).subscribe((resp: any) => {
-      console.log('Director data:', resp);
-      const director = resp[0]?.director || {}; // Adjust based on actual response structure
+      const director = resp[0]?.director || {};
       this.dialog.open(DirectorInfoComponent, {
         data: {
           name: director.name || directorName,
@@ -137,13 +107,6 @@ export class MovieCardComponent implements OnInit {
     });
   }
 
-
-
-  /**
-   * Opens dialog to display movie synopsis.
-   * @param movieName - The name of the movie.
-   * @param description - The description of the movie.
-   */
   openSynopsisDialog(movieName: string, description: string): void {
     this.dialog.open(MovieSynopsisComponent, {
       data: {
@@ -152,69 +115,5 @@ export class MovieCardComponent implements OnInit {
       },
       width: '500px'
     });
-  }
-
-
-
-  /**
-   * Checks if a movie is favorited by the user.
-   * @param movie - The movie object.
-   * @returns True if the movie is favorited, false otherwise.
-   */
-  isFav(movie: any): boolean {
-    return this.favoriteMovies.includes(movie._id);
-  }
-
-
-
-
- /**
-   * Toggles the favorite status of a movie.
-   * @param movie - The movie object.
-   */
-  toggleFav(movie: any): void {
-    const isFavorite = this.isFav(movie);
-    isFavorite ? this.deleteFavMovies(movie) : this.addFavMovies(movie);
-  }
-
-
-
-  /**
-   * Adds a movie to user's favorites.
-   * @param movie - The movie object to be added.
-   */
-  addFavMovies(movie: any): void {
-    let user = localStorage.getItem('user');
-    if (user) {
-      let parsedUser = JSON.parse(user);
-      this.fetchApiData.addFavoriteMovie(movie._id, parsedUser.username).subscribe((resp: any) => {
-        localStorage.setItem('user', JSON.stringify(resp));
-        this.favoriteMovies.push(movie._id);
-        this.snackBar.open(`${movie.title} has been added to your favorites`, 'OK', {
-          duration: 3000
-        });
-      });
-    }
-  }
-
-
-
-
-  /**
-   * Deletes a movie from user's favorites.
-   * @param movie - The movie object to be removed.
-   */
-  deleteFavMovies(movie: any): void {
-    let user = localStorage.getItem('user');
-    if (user) {
-      let parsedUser = JSON.parse(user);
-      this.fetchApiData.deleteFavoriteMovie(movie._id, parsedUser.username).subscribe((resp) => {
-        localStorage.setItem('user', JSON.stringify(resp));
-        this.favoriteMovies = this.favoriteMovies.filter(title => title !== movie.title);
-        this.snackBar.open(`${movie.title} has been removed from your favorites`, 'OK', {
-          duration: 3000
-        });
-      });
-    }
   }
 }

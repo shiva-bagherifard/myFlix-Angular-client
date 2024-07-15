@@ -15,7 +15,9 @@
       <button mat-button class="custom-button" (click)="openSynopsisDialog(movie.title, movie.description)">
         Synopsis
       </button>
-      <mat-icon>favorite_border</mat-icon>
+      <button mat-icon-button (click)="toggleFavorite(movie)">
+        <mat-icon>{{ isFavorite(movie) ? 'favorite' : 'favorite_border' }}</mat-icon>
+      </button>
     </mat-card-actions>
   </mat-card>
 </div>
