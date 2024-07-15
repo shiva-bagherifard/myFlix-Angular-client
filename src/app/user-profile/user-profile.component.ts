@@ -27,15 +27,6 @@ export class UserProfileComponent implements OnInit {
   favoriteMovies: any[] = [];
   _id: any[] = [];
 
-
-
-/**
-   * Creates an instance of UserProfileComponent.
-   * @param fetchApiData - API data fetching service.
-   * @param dialog - Angular Material dialog service.
-   * @param snackBar - Angular Material snackbar service.
-   * @param router - Angular Router service.
-   */
   constructor(
     public fetchApiData: FetchApiDataService,
     public dialog: MatDialog,
@@ -43,26 +34,37 @@ export class UserProfileComponent implements OnInit {
     public router: Router
   ) {}
 
-
-
-  /**
-   * Lifecycle hook that is called after data-bound properties of a directive are initialized.
-   */
   ngOnInit(): void {
-    this.getProfile();
+    this.getProfile(); // Call getProfile() during component initialization
   }
 
-
-
-  /**
-   * Fetches the user's profile information and favorite movies.
-   * @returns void
-   */
   public getProfile(): void {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
+    console.log('Current user:', user);
+  
     this.fetchApiData.getUser(user.username).subscribe((result: any) => {
-      console.log(result);
+      console.log('User profile data:', result);
       this.user = result;
+  
+      if (this.user.favoriteMovies && this.user.favoriteMovies.length > 0) {
+        console.log('User favorite movies IDs:', this.user.favoriteMovies);
+        this._id = this.user.favoriteMovies;
+  
+        // Fetch all movies and filter for favorite movies
+        this.fetchApiData.getAllMovies().subscribe((movies: any[]) => {
+          console.log('All movies:', movies);
+          this.favoriteMovies = movies.filter((movie: any) =>
+            this._id.includes(movie._id)
+          );
+          console.log('Favorite movies:', this.favoriteMovies); // Logging favorite movies for verification
+        }, (error) => {
+          console.error('Error fetching movies:', error);
+        });
+      } else {
+        console.log('User has no favorite movies.');
+        this.favoriteMovies = [];
+      }
+  
       this.userData.username = this.user.username;
       this.userData.email = this.user.email;
       if (this.user.birthday) {
@@ -73,21 +75,13 @@ export class UserProfileComponent implements OnInit {
       }
       this.formUserData = { ...this.userData };
       this.formUserData.password = this.user.password;
-      this._id = this.user.favoriteMovies;
-
-      this.fetchApiData.getAllMovies().subscribe((movies: any[]) => {
-        this.favoriteMovies = movies.filter((movie: any) =>
-          this._id.includes(movie._id)
-        );
-      });
+    }, (error) => {
+      console.error('Error fetching user profile:', error);
     });
   }
+  
+  
 
-
-  /**
-   * Updates the user's profile information.
-   * @returns Promise<void>
-   */
   async updateUser(): Promise<void> {
     let formData = this.formUserData;
     formData.birthDate = this.user.birthday.slice(0, 10);
@@ -99,7 +93,7 @@ export class UserProfileComponent implements OnInit {
         this.snackBar.open('User updated successfully!', 'OK', {
           duration: 2000,
         });
-        this.getProfile();
+        this.getProfile(); // Refresh profile data after update
       },
       (error) => {
         console.log('Error updating user:', error);
@@ -110,12 +104,6 @@ export class UserProfileComponent implements OnInit {
     );
   }
 
-
-
-   /**
-   * Deletes the user's account after confirmation.
-   * @returns Promise<void>
-   */
   async deleteUser(): Promise<void> {
     console.log('deleteUser function called:', this.user.username);
     this.fetchApiData.deleteUser().subscribe(
