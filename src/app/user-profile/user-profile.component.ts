@@ -65,14 +65,15 @@ export class UserProfileComponent implements OnInit {
         this.favoriteMovies = [];
       }
   
-      this.userData.username = this.user.username;
-      this.userData.email = this.user.email;
+      this.userData.username = user.username;
+      this.userData.email = user.email;
       if (this.user.birthday) {
         let Birthday = new Date(this.user.birthday);
         if (!isNaN(Birthday.getTime())) {
           this.userData.birthDate = Birthday.toISOString().split('T')[0];
         }
       }
+      console.log(this.userData)
       this.formUserData = { ...this.userData };
       this.formUserData.password = this.user.password;
     }, (error) => {
@@ -80,9 +81,7 @@ export class UserProfileComponent implements OnInit {
     });
   }
   
-  
-
-  async updateUser(): Promise<void> {
+  updateUser(): void {
     let formData = this.formUserData;
     formData.birthDate = this.user.birthday.slice(0, 10);
     console.log(formData);
@@ -104,7 +103,7 @@ export class UserProfileComponent implements OnInit {
     );
   }
 
-  async deleteUser(): Promise<void> {
+  deleteUser(): void {
     console.log('deleteUser function called:', this.user.username);
     this.fetchApiData.deleteUser().subscribe(
       (response: any) => {
