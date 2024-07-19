@@ -46,9 +46,9 @@ export class UserProfileComponent implements OnInit {
       console.log('User profile data:', result);
       this.user = result;
   
-      if (this.user.favoriteMovies && this.user.favoriteMovies.length > 0) {
-        console.log('User favorite movies IDs:', this.user.favoriteMovies);
-        this._id = this.user.favoriteMovies;
+      if (this.user.FavoriteMovies && this.user.FavoriteMovies.length > 0) {
+        console.log('User favorite movies IDs:', this.user.FavoriteMovies);
+        this._id = this.user.FavoriteMovies;
   
         // Fetch all movies and filter for favorite movies
         this.fetchApiData.getAllMovies().subscribe((movies: any[]) => {
@@ -67,12 +67,7 @@ export class UserProfileComponent implements OnInit {
   
       this.userData.username = user.username;
       this.userData.email = user.email;
-      if (this.user.birthday) {
-        let Birthday = new Date(this.user.birthday);
-        if (!isNaN(Birthday.getTime())) {
-          this.userData.birthDate = Birthday.toISOString().split('T')[0];
-        }
-      }
+      
       console.log(this.userData)
       this.formUserData = { ...this.userData };
       this.formUserData.password = this.user.password;
@@ -83,42 +78,31 @@ export class UserProfileComponent implements OnInit {
   
   updateUser(): void {
     let formData = this.formUserData;
-    formData.birthDate = this.user.birthday.slice(0, 10);
-    console.log(formData);
-    this.fetchApiData.editUser(formData).subscribe(
-      (result: any) => {
-        console.log('User update success:', result);
-        localStorage.setItem('user', JSON.stringify(result));
-        this.snackBar.open('User updated successfully!', 'OK', {
-          duration: 2000,
-        });
-        this.getProfile(); // Refresh profile data after update
-      },
-      (error) => {
-        console.log('Error updating user:', error);
-        this.snackBar.open('Failed to update user: ' + error, 'OK', {
-          duration: 2000,
-        });
-      }
-    );
+    formData.birthDate = this.userData.birthDate;
+    console.log(this.formUserData);
+
+    this.fetchApiData.editUser(formData).subscribe((result) => {
+      console.log(result);
+      localStorage.setItem('user', JSON.stringify(result));
+      this.snackBar.open('User information successfully updated!', 'OK', {
+        duration: 2000,
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    });
   }
 
-  deleteUser(): void {
-    console.log('deleteUser function called:', this.user.username);
-    this.fetchApiData.deleteUser().subscribe(
-      (response: any) => {
+  deleteProfile(): void {
+    if (confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
+      this.router.navigate(['welcome']).then(() => {
+        this.snackBar.open('Profile has been successfully deleted!', 'OK', {
+          duration: 2000,
+        });
+      });
+      this.fetchApiData.deleteUser().subscribe(() => {
         localStorage.clear();
-        this.snackBar.open('User deleted successfully!', 'OK', {
-          duration: 2000,
-        });
-        this.router.navigate(['welcome']);
-      },
-      (error) => {
-        console.log('Error deleting user:', error);
-        this.snackBar.open('Failed to delete user: ' + error, 'OK', {
-          duration: 2000,
-        });
-      }
-    );
+      });
+    }
   }
 }
